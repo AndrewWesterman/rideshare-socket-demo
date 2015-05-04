@@ -39,9 +39,7 @@ io.on("connection", function(socket){
 
     socket.on("chat message", function(msg){
         var room = msg.room;
-        socket.broadcast.to(room).emit("private message", {
-
-        });
+        socket.to(room).emit("chat message", msg);
     });
 
     socket.on("user join", function(user){
@@ -50,16 +48,18 @@ io.on("connection", function(socket){
     });
 
     socket.on("join chat", function(room){
-        socket.join(room); 
+        socket.join(room);
         console.log("User has joined "+room);      
     });
 
     socket.on("add ride", function(ride){
+        var room = ride.user+"-chat";
 
         //Add ride to database
         //ride should have a room name associated with it.
         rides.push(ride);
-
+        socket.join(room);
+        console.log("User has joined "+room);
         socket.broadcast.emit("add ride", ride);
 
     });

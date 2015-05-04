@@ -4,6 +4,8 @@ var main = function(){
     "use strict";
 
     var socket = io();
+    var chat_room = null;
+
     var request = function(name){
         
     };
@@ -14,6 +16,7 @@ var main = function(){
 
         $request.click(function(){
             var room = name+"-chat";
+            chat_room = room;
             console.log(username+" is joining "+room);
             socket.emit("join chat", room);
         });
@@ -41,13 +44,15 @@ var main = function(){
     });
 
     $("form").submit(function(){
-        socket.emit("chat message", $("#m").val());
+        socket.emit("chat message", {user: username, room: chat_room, msg: $("#m").val()});
+        $("#chat").append($("<div>").text(username+": "+$("#m").val()));
         $("#m").val("");
         return false;
     });
 
     $("#add-ride").on("click", function(){
         var ride = {user : username};
+        chat_room = username+"-chat";
         console.log(username + " has created a ride");
         socket.emit("add ride", ride);
     });
@@ -59,6 +64,10 @@ var main = function(){
     socket.on("add ride", function(ride){
         console.log(ride.user+" has created a ride");
         $("#active-users").append(createUserHTML(ride.user));
+    });
+
+    socket.on("chat message", function(msg){
+        $("#chat").append($("<div>").text(msg.user+": "+msg.msg));
     });
 
 };
