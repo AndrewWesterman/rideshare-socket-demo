@@ -25,6 +25,11 @@ app.post("/users", function(req, res){
     res.json({users: users});
 });
 
+app.post("/rides", function(req, res){
+    //replace with actual DB call
+    res.json({rides: rides});
+});
+
 io.on("connection", function(socket){
 
     console.log("user has connected");
@@ -55,7 +60,7 @@ io.on("connection", function(socket){
         //ride should have a room name associated with it.
         rides.push(ride);
 
-        socket.emit("add ride", ride);
+        socket.broadcast.emit("add ride", ride);
 
     });
 });
